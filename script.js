@@ -1,72 +1,131 @@
-"use strict"; // Активує строгий режим
-console.log("Підключено JavaScript для Практичної роботи №1");
+"use strict";
+console.log("Підключено JavaScript для Практичної роботи №3");
 
-// 1. Робота в DevTools
-console.log("Hello from external file!");
+// 1. Об'єктний літерал
+const car = {
+  brand: "Toyota",
+  year: 2020,
+  displayInfo() {
+    console.log(`Автомобіль: ${this.brand}, Рік: ${this.year}`);
+  },
+};
+car.displayInfo();
 
-// 2. Strict mode — помилка при неоголошеній змінній
-// x = 10; // ❌ ReferenceError, бо x не оголошена
+// 2. Метод з this
+const person = {
+  name: "Іван",
+  sayHello() {
+    console.log(`Привіт, мене звуть ${this.name}`);
+  },
+};
+person.sayHello();
 
-// 3. Змінні та область видимості
-let age = 25;
-const PI = 3.14;
-var name = "John";
-
-{
-  let blockVar = "Я у блоці";
-  console.log(blockVar); // Працює
+// 3. Функція-конструктор і прототип
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
 }
-// console.log(blockVar); // ❌ ReferenceError
+Person.prototype.greet = function () {
+  console.log(`Привіт, я ${this.name}, мені ${this.age} років.`);
+};
+const person1 = new Person("Олена", 28);
+person1.greet();
 
-// Зміна значення змінної
-let counter = 10;
-counter++;
-console.log("Counter:", counter);
+// 4. Клас і наслідування
+class Student extends Person {
+  constructor(name, age, grade) {
+    super(name, age);
+    this.grade = grade;
+  }
+  displayInfo() {
+    console.log(
+      `Студент: ${this.name}, Вік: ${this.age}, Оцінка: ${this.grade}`
+    );
+  }
+}
+const student1 = new Student("Андрій", 22, "A");
+student1.greet();
+student1.displayInfo();
 
-// 4. Типи даних і typeof
-console.log(typeof 42); // number
-console.log(typeof "Hello"); // string
-console.log(typeof true); // boolean
-console.log(typeof null); // object (особливість JS)
-console.log(typeof undefined); // undefined
-console.log(typeof { name: "JS" }); // object
-console.log(typeof Symbol("id")); // symbol
-console.log(typeof 10n); // bigint
+// 5. Інкапсуляція через геттери та сеттери
+class User {
+  constructor(name, age, profession) {
+    this._name = name;
+    this._age = age;
+    this._profession = profession;
+  }
 
-// 5. Перетворення типів
-console.log(Number("123")); // 123
-console.log(String(123)); // "123"
-console.log(Boolean(0)); // false
-console.log(Boolean(1)); // true
+  get name() {
+    return this._name;
+  }
 
-// 6. Взаємодія з користувачем
-alert("Ласкаво просимо до анкети!");
+  set name(value) {
+    if (value) this._name = value;
+  }
 
-let userName = prompt("Введіть ваше ім'я:");
-let userAge = Number(prompt("Введіть ваш вік:"));
-let userCity = prompt("З якого ви міста?");
-let userColor = prompt("Ваш улюблений колір?");
-let isWorking = confirm("Ви зараз працюєте?");
+  get age() {
+    return this._age;
+  }
 
-let isAdult = userAge >= 18;
+  set age(value) {
+    if (value > 0) this._age = value;
+  }
 
-console.log("Ім'я:", userName, "| Тип:", typeof userName);
-console.log("Вік:", userAge, "| Тип:", typeof userAge);
-console.log("Місто:", userCity, "| Тип:", typeof userCity);
-console.log("Колір:", userColor, "| Тип:", typeof userColor);
-console.log("Працює:", isWorking, "| Тип:", typeof isWorking);
-console.log("Повнолітній:", isAdult);
+  get profession() {
+    return this._profession;
+  }
 
-// 7. Виведення результату
-const summary = `
-АНКЕТА КОРИСТУВАЧА:
-Ім'я: ${userName}
-Вік: ${userAge}
-Місто: ${userCity}
-Улюблений колір: ${userColor}
-Працює: ${isWorking ? "так" : "ні"}
-Повнолітній: ${isAdult ? "так" : "ні"}
-`;
+  set profession(value) {
+    if (value) this._profession = value;
+  }
 
-alert(summary);
-console.log(summary);
+  display() {
+    console.log(
+      `Користувач: ${this._name}, Вік: ${this._age}, Професія: ${this._profession}`
+    );
+  }
+}
+
+class Admin extends User {
+  constructor(name, age, profession, role) {
+    super(name, age, profession);
+    this.role = role;
+  }
+
+  display() {
+    console.log(
+      `Адміністратор: ${this.name}, Вік: ${this.age}, Професія: ${this.profession}, Роль: ${this.role}`
+    );
+  }
+}
+
+// 6. Інтерактивна частина: "Бібліотека користувачів"
+function createUserFromPrompt() {
+  const name = prompt("Введіть ім’я:");
+  const age = Number(prompt("Введіть вік:"));
+  const profession = prompt("Введіть професію:");
+  const isAdmin = confirm("Це адміністратор?");
+  let role;
+
+  if (isNaN(age) || age <= 0) {
+    alert("Невірне значення віку!");
+    return;
+  }
+
+  if (isAdmin) {
+    role = prompt("Введіть роль адміністратора:");
+    const admin = new Admin(name, age, profession, role);
+    admin.display();
+    alert(
+      `Адміністратор: ${admin.name}, Вік: ${admin.age}, Роль: ${admin.role}`
+    );
+  } else {
+    const user = new User(name, age, profession);
+    user.display();
+    alert(
+      `Користувач: ${user.name}, Вік: ${user.age}, Професія: ${user.profession}`
+    );
+  }
+}
+
+createUserFromPrompt();
